@@ -117,5 +117,26 @@ const checkFlaggedStatus = async (req, res, next) => {
       return res.status(401).json({ error: 'Authentication required' });
     }
 
-    const user*
-
+    const user = await User.findById(req.user.id);
+    
+    if (user.flagged) {
+      return res.status(403).json({
+        error: 'Account is flagged',
+        flaggedDate: user.flaggedDate,
+        message: 'Your account has been flagged for inappropriate behaviour. Please contact support.'
+      });
+    }
+
+    next();
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+module.exports = {
+  authenticateToken,
+  authenticateAdmin,
+  optionalAuthentication,
+  checkFrozenStatus,
+  checkFlaggedStatus
+};
